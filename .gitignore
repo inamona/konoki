@@ -1,0 +1,9 @@
+# IntelliJ
+/.idea/
+*.iml
+
+# Configs
+config.yml
+
+# Build
+/target/

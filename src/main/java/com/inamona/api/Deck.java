@@ -2,8 +2,8 @@ package com.inamona.api;
 
 import com.google.common.collect.Lists;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.List;
+import java.util.Stack;
 
 import static com.inamona.api.Hand.HAND_SIZE;
 
@@ -17,13 +17,19 @@ public class Deck {
     /**
      * The {@link Card}s in the Deck.
      */
-    private Deque<Card> cards;
+    private Stack<Card> cards;
 
     /**
      * New instance.
      */
     public Deck() {
-        this.cards = Arrays.stream(Suite.values()).parallel().collect(new ArrayDeque<Card>(), ArrayDeque::add, ArrayDeque::addAll);
+        final Stack<Card> cards = new Stack<>();
+        for (final Suite suite : Suite.values()) {
+            for (final FaceValue faceValue : FaceValue.values()) {
+                cards.add(new Card(suite, faceValue));
+            }
+        }
+        this.cards = cards;
     }
 
     /**
@@ -35,7 +41,7 @@ public class Deck {
         while (theHand.size() < HAND_SIZE) {
             theHand.add(this.cards.pop());
         }
-        return new Hand(theHand);
+        return null;
     }
 
     /**
@@ -43,5 +49,13 @@ public class Deck {
      */
     public void shuffle() {
 
+    }
+
+    /**
+     * Detemines the number of {@link Card}s left in the Deck.
+     * @return the number of {@link Card}s left in the Deck.
+     */
+    public int remainingCards() {
+        return this.cards.size();
     }
 }

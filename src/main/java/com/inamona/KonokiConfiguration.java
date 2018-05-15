@@ -1,10 +1,15 @@
 package com.inamona;
 
 import io.dropwizard.Configuration;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hibernate.validator.constraints.*;
-import javax.validation.constraints.*;
+import io.dropwizard.db.DataSourceFactory;
+import lombok.Getter;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 public class KonokiConfiguration extends Configuration {
-    // TODO: implement service configuration
+    @Getter
+    @Valid
+    @NotNull
+    private DataSourceFactory database = new DataSourceFactory();
 }

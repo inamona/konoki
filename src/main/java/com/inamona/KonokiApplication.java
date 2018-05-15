@@ -1,10 +1,23 @@
 package com.inamona;
 
+import com.inamona.api.Game;
+import com.inamona.db.GameDAO;
+import com.inamona.health.BasicHealthCheck;
+import com.inamona.resources.GameResource;
 import io.dropwizard.Application;
+import io.dropwizard.db.PooledDataSourceFactory;
+import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 public class KonokiApplication extends Application<KonokiConfiguration> {
+
+    private final HibernateBundle<KonokiConfiguration> hibernateBundle = new HibernateBundle<KonokiConfiguration>(Game.class) {
+        @Override
+        public PooledDataSourceFactory getDataSourceFactory(KonokiConfiguration konokiConfiguration) {
+            return konokiConfiguration.getDatabase();
+        }
+    };
 
     public static void main(final String[] args) throws Exception {
         new KonokiApplication().run(args);
@@ -17,13 +30,14 @@ public class KonokiApplication extends Application<KonokiConfiguration> {
 
     @Override
     public void initialize(final Bootstrap<KonokiConfiguration> bootstrap) {
-        // TODO: application initialization
+        bootstrap.addBundle(this.hibernateBundle);
     }
 
     @Override
-    public void run(final KonokiConfiguration configuration,
-                    final Environment environment) {
-        // TODO: implement application
+    public void run(final KonokiConfiguration configuration, final Environment environment) {
+        final GameDAO gameDAO = new GameDAO(this.hibernateBundle.getSessionFactory());
+        environment.healthChecks().register("basic", new BasicHealthCheck());
+        environment.jersey().register(new GameResource(gameDAO));
     }
 
 }

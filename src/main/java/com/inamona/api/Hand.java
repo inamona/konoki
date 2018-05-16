@@ -1,13 +1,12 @@
 package com.inamona.api;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * Models a hand dealt as part of a {@link Game}.
@@ -15,8 +14,16 @@ import java.util.UUID;
  * @author christopher
  * @since 5/13/18
  */
+@Getter
 @Entity
-@AllArgsConstructor
+@Table(name = "hands")
+@NamedQueries(
+    @NamedQuery(
+        name = "com.inamona.api.Hand.findAll",
+        query = "from Hand h"
+    )
+)
+@EqualsAndHashCode
 public class Hand {
     /**
      * The number of {@link Card}s in a Hand.
@@ -29,17 +36,30 @@ public class Hand {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", updatable = false, nullable = false)
-    private final long handId;
+    private long handId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "game_id", nullable = false)
+    private Game game;
 
     /**
      * The {@link LocalDateTime} at which the Hand was dealt.
      */
+    @CreationTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Temporal(TemporalType.DATE)
-    private final Date dealtAt;
+    private LocalDateTime dealtAt;
+
+//    /**
+//     * The {@link Card}s in the Hand.
+//     */
+//    @ManyToOne()
+//    private final List<Card> cards = Lists.newArrayList();
 
     /**
-     * The {@link Card}s in the Hand.
+     * Sets this Hand's parent {@link Game}.
+     * @param game the parent {@link Game}.
      */
-    private final List<Card> cards;
+    public void setGame(final Game game) {
+        this.game = game;
+    }
 }

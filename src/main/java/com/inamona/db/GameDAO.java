@@ -15,7 +15,7 @@ public class GameDAO extends AbstractDAO<Game> {
         super(sessionFactory);
     }
 
-    public Game findById(long id) {
+    public Game findById(final long id) {
         return this.get(id);
     }
 

@@ -1,5 +1,6 @@
 package com.inamona.db;
 
+import com.inamona.api.Game;
 import com.inamona.api.Hand;
 import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.SessionFactory;
@@ -19,8 +20,10 @@ public class HandDAO extends AbstractDAO<Hand> {
         return this.get(id);
     }
 
-    public long create(final Hand hand) {
-        return this.persist(hand).getHandId();
+    public Hand create(final Game game) {
+        final Hand hand = new Hand();
+        hand.setGame(game);
+        return this.persist(hand);
     }
 
     public List<Hand> findAll() {

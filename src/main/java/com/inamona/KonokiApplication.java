@@ -42,9 +42,8 @@ public class KonokiApplication extends Application<KonokiConfiguration> {
         final HandDAO handDAO = new HandDAO(this.hibernateBundle.getSessionFactory());
 
         environment.healthChecks().register("basic", new BasicHealthCheck());
-        final HandResource handResource = new HandResource(handDAO);
-        environment.jersey().register(handResource);
-        environment.jersey().register(new GameResource(gameDAO, handResource));
+        environment.jersey().register(new HandResource(handDAO));
+        environment.jersey().register(new GameResource(gameDAO, handDAO));
     }
 
 }

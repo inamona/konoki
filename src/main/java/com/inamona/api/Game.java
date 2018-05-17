@@ -1,6 +1,8 @@
 package com.inamona.api;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -55,6 +57,7 @@ public class Game {
      * The {@link Hand}s in the Game.
      */
     @OneToMany
+    @JsonIgnore
     private List<Hand> hands = Lists.newArrayList();
 
     /**

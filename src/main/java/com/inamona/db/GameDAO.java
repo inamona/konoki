@@ -20,13 +20,14 @@ public class GameDAO extends AbstractDAO<Game> {
         return this.get(id);
     }
 
-    public long create(final Game game) {
-        return this.persist(game).getGameId();
+    public Game create(final Game game) {
+        return this.persist(game);
     }
 
-    public Game addHand(final Game game, final Hand hand) {
-        game.addHand(hand);
-        return this.persist(game);
+    public Hand addHand(final Game game) {
+        final Hand hand = game.addHand();
+        this.persist(game);
+        return hand;
     }
 
     public List<Game> findAll() {

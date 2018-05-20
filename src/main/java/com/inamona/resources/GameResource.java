@@ -1,24 +1,18 @@
 package com.inamona.resources;
 
 import com.codahale.metrics.annotation.Timed;
-import com.google.common.collect.Lists;
 import com.inamona.api.Game;
 import com.inamona.api.Hand;
-import com.inamona.api.representations.GameRepresentation;
 import com.inamona.db.GameDAO;
 import com.inamona.db.HandDAO;
 import io.dropwizard.hibernate.UnitOfWork;
 import lombok.AllArgsConstructor;
 
-import javax.annotation.Resource;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Link;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
+import javax.ws.rs.core.UriInfo;
 
 /**
  * @author christopher
@@ -32,7 +26,6 @@ public class GameResource {
      * The GameDAO.
      */
     private final GameDAO gameDAO;
-
     /**
      * The HandDAO.
      */
@@ -52,7 +45,7 @@ public class GameResource {
     public Response getGameById(@PathParam("gameId") final long gameId) {
         final Game game = this.gameDAO.findById(gameId);
         return Response.ok()
-            .entity(new GameRepresentation(game))
+            .entity(game)
             .build();
     }
 
@@ -67,17 +60,20 @@ public class GameResource {
     @POST
     @Timed
     @UnitOfWork
-    public void createGame() {
-        this.gameDAO.create(new Game());
+    public Response createGame(@Context final UriInfo uriInfo) {
+        final Game game = this.gameDAO.create(new Game());
+        return Response.created(game.selfUri(uriInfo)).build();
     }
 
     @POST
     @Path("/{gameId}/hands")
     @Timed
     @UnitOfWork
-    public void createHandForGame(@PathParam("gameId") final long gameId) {
+    public Response createHandForGame(@PathParam("gameId") final long gameId, @Context final UriInfo uriInfo) {
         final Game game = this.gameDAO.findById(gameId);
-        final Hand hand = this.handDAO.create(game);
-        this.gameDAO.addHand(game, hand);
+        final Hand hand = game.addHand();
+        hand.setGame(game);
+        this.handDAO.create(hand);
+        return Response.created(hand.selfUri(uriInfo)).build();
     }
 }

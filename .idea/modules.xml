@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/konoki.iml" filepath="$PROJECT_DIR$/konoki.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/konoki_main.iml" filepath="$PROJECT_DIR$/.idea/modules/konoki_main.iml" group="konoki" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/konoki_test.iml" filepath="$PROJECT_DIR$/.idea/modules/konoki_test.iml" group="konoki" />
     </modules>
   </component>
 </project>

@@ -1,6 +1,7 @@
 package com.inamona.resources;
 
 import com.codahale.metrics.annotation.Timed;
+import com.inamona.api.Game;
 import com.inamona.db.HandDAO;
 import io.dropwizard.hibernate.UnitOfWork;
 import lombok.AllArgsConstructor;
@@ -38,5 +39,13 @@ public class HandResource {
     @Path("{handId}")
     public Response getHand(@PathParam("handId") final long handId) {
         return Response.ok().entity(this.handDAO.findById(handId)).build();
+    }
+
+    @GET
+    @Timed
+    @UnitOfWork
+    @Path("/{gameId}/hands")
+    public Response getAllHandsForGame(@PathParam("gameId") final long gameId) {
+        return Response.ok().entity(this.handDAO.findAll(gameId)).build();
     }
 }

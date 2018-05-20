@@ -2,13 +2,15 @@ package com.inamona.api;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -60,13 +62,19 @@ public class Game {
     @JsonIgnore
     private List<Hand> hands = Lists.newArrayList();
 
+    @Transient
+    @JsonInclude
+    private final List<Link> links = Lists.newArrayList();
+
     /**
      * Adds a {@link Hand} to this Game.
-     * @param hand the {@link Hand} to add.
+     * @return a new {@link Hand}.
      */
-    public void addHand(final Hand hand) {
+    public Hand addHand() {
+        final Hand hand = new Hand();
         this.hands.add(hand);
         hand.setGame(this);
+        return hand;
     }
 
     /**
@@ -76,5 +84,17 @@ public class Game {
     public void removeHand(final Hand hand) {
         this.hands.remove(hand);
         hand.setGame(null);
+    }
+
+    /**
+     * Adds a {@link Link} to this Game's links.
+     * @param link the Link to add.
+     */
+    public void addLink(final Link link) {
+        this.links.add(link);
+    }
+
+    public URI selfUri(final UriInfo uriInfo) {
+        return uriInfo.getAbsolutePathBuilder().path(String.valueOf(this.gameId)).build();
     }
 }

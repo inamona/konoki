@@ -20,13 +20,15 @@ public class HandDAO extends AbstractDAO<Hand> {
         return this.get(id);
     }
 
-    public Hand create(final Game game) {
-        final Hand hand = new Hand();
-        hand.setGame(game);
+    public Hand create(final Hand hand) {
         return this.persist(hand);
     }
 
     public List<Hand> findAll() {
+        return this.list(this.namedQuery("com.inamona.api.Hand.findAll"));
+    }
+
+    public List<Hand> findAll(final long gameId) {
         return this.list(this.namedQuery("com.inamona.api.Hand.findAll"));
     }
 }

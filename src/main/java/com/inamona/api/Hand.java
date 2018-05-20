@@ -8,6 +8,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.time.LocalDateTime;
 
 /**
@@ -64,5 +66,9 @@ public class Hand {
      */
     public void setGame(final Game game) {
         this.game = game;
+    }
+
+    public URI selfUri(final UriInfo uriInfo) {
+        return uriInfo.getAbsolutePathBuilder().path(String.valueOf(this.handId)).build();
     }
 }

@@ -5,6 +5,11 @@
 # Configs
 config.yml
 
+Gradle
+.gradle
+
 # Build
 /target/
 /build/
+/out/
+*.class

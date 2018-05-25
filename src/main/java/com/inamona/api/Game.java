@@ -3,7 +3,10 @@ package com.inamona.api;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.collect.Lists;
+import com.inamona.resources.HandResource;
 import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -35,7 +38,7 @@ public class Game {
      * The ID of this game.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
     private long gameId;
 
@@ -63,7 +66,9 @@ public class Game {
     private List<Hand> hands = Lists.newArrayList();
 
     @Transient
-    @JsonInclude
+    @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
+    @JsonSerialize
+    @JsonDeserialize
     private final List<Link> links = Lists.newArrayList();
 
     /**
@@ -95,6 +100,11 @@ public class Game {
     }
 
     public URI selfUri(final UriInfo uriInfo) {
-        return uriInfo.getAbsolutePathBuilder().path(String.valueOf(this.gameId)).build();
+        return uriInfo.getAbsolutePath();
+    }
+
+    public void setLinks(final UriInfo uriInfo) {
+        this.addLink(new Link(uriInfo.getAbsolutePath(), "self"));
+        this.hands.forEach(hand -> this.addLink(new Link(uriInfo.getAbsolutePathBuilder().path(HandResource.class).path(String.valueOf(hand.getHandId())).build(hand), "hand")));
     }
 }

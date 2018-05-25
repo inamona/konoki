@@ -38,7 +38,7 @@ public class Hand {
      * The ID of the Hand within the {@link Game}
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
     private long handId;
 
@@ -52,13 +52,8 @@ public class Hand {
      */
     @CreationTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "dealt_at", updatable = false)
     private LocalDateTime dealtAt;
-
-//    /**
-//     * The {@link Card}s in the Hand.
-//     */
-//    @ManyToOne()
-//    private final List<Card> cards = Lists.newArrayList();
 
     /**
      * Sets this Hand's parent {@link Game}.

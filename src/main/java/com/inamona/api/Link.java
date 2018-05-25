@@ -19,7 +19,7 @@ public class Link {
     /**
      * The Link URI.
      */
-    private final URI uri;
+    private final URI href;
     /**
      * The Link rel.
      */

@@ -3,6 +3,7 @@ package com.inamona.resources;
 import com.codahale.metrics.annotation.Timed;
 import com.inamona.api.Game;
 import com.inamona.api.Hand;
+import com.inamona.api.Link;
 import com.inamona.db.GameDAO;
 import com.inamona.db.HandDAO;
 import io.dropwizard.hibernate.UnitOfWork;
@@ -13,6 +14,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.util.List;
 
 /**
  * @author christopher
@@ -34,16 +36,19 @@ public class GameResource {
     @GET
     @Timed
     @UnitOfWork
-    public Response getAllGames() {
-        return Response.ok().entity(this.gameDAO.findAll()).build();
+    public Response getAllGames(@Context UriInfo uriInfo) {
+        final List<Game> games = this.gameDAO.findAll();
+        games.forEach(game -> game.setLinks(uriInfo));
+        return Response.ok().entity(games).build();
     }
 
     @GET
     @Path("/{gameId}")
     @Timed
     @UnitOfWork
-    public Response getGameById(@PathParam("gameId") final long gameId) {
+    public Response getGameById(@PathParam("gameId") final long gameId, @Context UriInfo uriInfo) {
         final Game game = this.gameDAO.findById(gameId);
+        game.setLinks(uriInfo);
         return Response.ok()
             .entity(game)
             .build();

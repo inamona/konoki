@@ -12,6 +12,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.time.LocalDateTime;
@@ -99,12 +100,35 @@ public class Game {
         this.links.add(link);
     }
 
+    /**
+     * Produces an absolute {@link URI} to this Game.
+     * @param uriInfo the {@link UriInfo} from the incoming request.
+     * @return the absolute {@link URI} to this Game.
+     */
     public URI selfUri(final UriInfo uriInfo) {
         return uriInfo.getAbsolutePath();
     }
 
+    /**
+     * Sets all the {@link Link}s to be sent in the client {@link Response}.
+     * @param uriInfo the {@link UriInfo} from the incoming request.
+     */
     public void setLinks(final UriInfo uriInfo) {
         this.addLink(new Link(uriInfo.getAbsolutePath(), "self"));
-        this.hands.forEach(hand -> this.addLink(new Link(uriInfo.getAbsolutePathBuilder().path(HandResource.class).path(String.valueOf(hand.getHandId())).build(hand), "hand")));
+        this.hands.forEach(hand -> this.addLink(this.getHandLink(hand, uriInfo)));
+    }
+
+    /**
+     * Convenience method to get a {@link Link} for a given {@link Hand} resource on this Game.
+     * @param hand the {@link Hand} for which a {@link Link} is to be generated.
+     * @param uriInfo the {@link UriInfo} from the incoming request.
+     * @return the {@link Link} for the {@link} Hand.
+     */
+    private Link getHandLink(final Hand hand, final UriInfo uriInfo) {
+        final URI handHref = uriInfo.getAbsolutePathBuilder()
+            .path(HandResource.class)
+            .path(String.valueOf(hand.getHandId()))
+            .build(hand);
+        return new Link(handHref, "hand");
     }
 }

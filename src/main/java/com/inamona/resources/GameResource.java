@@ -3,7 +3,6 @@ package com.inamona.resources;
 import com.codahale.metrics.annotation.Timed;
 import com.inamona.api.Game;
 import com.inamona.api.Hand;
-import com.inamona.api.Link;
 import com.inamona.db.GameDAO;
 import com.inamona.db.HandDAO;
 import io.dropwizard.hibernate.UnitOfWork;
@@ -14,6 +13,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -67,7 +67,11 @@ public class GameResource {
     @UnitOfWork
     public Response createGame(@Context final UriInfo uriInfo) {
         final Game game = this.gameDAO.create(new Game());
-        return Response.created(game.selfUri(uriInfo)).build();
+        final URI gameUri = uriInfo.getBaseUriBuilder()
+            .path(GameResource.class)
+            .path(String.valueOf(game.getGameId()))
+            .build();
+        return Response.created(gameUri).build();
     }
 
     @POST

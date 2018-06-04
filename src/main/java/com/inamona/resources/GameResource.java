@@ -3,6 +3,7 @@ package com.inamona.resources;
 import com.codahale.metrics.annotation.Timed;
 import com.inamona.api.Game;
 import com.inamona.api.Hand;
+import com.inamona.api.filters.authentication.Secured;
 import com.inamona.db.GameDAO;
 import com.inamona.db.HandDAO;
 import io.dropwizard.hibernate.UnitOfWork;
@@ -20,6 +21,7 @@ import java.util.List;
  * @author christopher
  * @since 5/13/18
  */
+@Secured
 @Path("games")
 @Produces(MediaType.APPLICATION_JSON)
 @AllArgsConstructor

@@ -2,6 +2,7 @@ package com.inamona;
 
 import com.inamona.api.Game;
 import com.inamona.api.Hand;
+import com.inamona.api.filters.authentication.AuthenticationFilter;
 import com.inamona.db.GameDAO;
 import com.inamona.db.HandDAO;
 import com.inamona.health.BasicHealthCheck;
@@ -42,6 +43,7 @@ public class KonokiApplication extends Application<KonokiConfiguration> {
         final HandDAO handDAO = new HandDAO(this.hibernateBundle.getSessionFactory());
 
         environment.healthChecks().register("basic", new BasicHealthCheck());
+        environment.jersey().register(new AuthenticationFilter());
         environment.jersey().register(new HandResource(handDAO));
         environment.jersey().register(new GameResource(gameDAO, handDAO));
     }

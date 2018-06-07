@@ -30,12 +30,6 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "games")
-@NamedQueries(
-    @NamedQuery(
-        name = "com.inamona.api.Game.findAll",
-        query = "from Game g"
-    )
-)
 public class Game {
     /**
      * The ID of this game.

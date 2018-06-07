@@ -2,6 +2,7 @@ package com.inamona.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import com.inamona.api.User;
+import com.inamona.api.filters.authentication.Secured;
 import com.inamona.db.UserDAO;
 import io.dropwizard.hibernate.UnitOfWork;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,7 @@ public class UserResource {
     @GET
     @Timed
     @UnitOfWork
+    @Secured
     public Response getAllUsers() {
         return Response.ok().entity(this.userDAO.findAll()).build();
     }

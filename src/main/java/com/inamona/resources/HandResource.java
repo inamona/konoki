@@ -1,6 +1,7 @@
 package com.inamona.resources;
 
 import com.codahale.metrics.annotation.Timed;
+import com.inamona.api.filters.authentication.Secured;
 import com.inamona.db.HandDAO;
 import io.dropwizard.hibernate.UnitOfWork;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ import javax.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 @AllArgsConstructor
 @Path("hands")
+@Secured
 public class HandResource {
     /**
      * The {@link HandDAO}.

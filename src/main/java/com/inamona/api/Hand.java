@@ -7,7 +7,6 @@ import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import javax.ws.rs.Path;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.time.LocalDateTime;

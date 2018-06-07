@@ -30,6 +30,7 @@ public class GameResource {
      * The GameDAO.
      */
     private final GameDAO gameDAO;
+
     /**
      * The HandDAO.
      */

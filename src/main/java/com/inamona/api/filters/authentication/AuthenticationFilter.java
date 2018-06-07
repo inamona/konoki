@@ -1,5 +1,10 @@
 package com.inamona.api.filters.authentication;
 
+import com.inamona.api.Token;
+import com.inamona.db.TokenDAO;
+import io.dropwizard.hibernate.UnitOfWork;
+import lombok.AllArgsConstructor;
+
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -12,6 +17,7 @@ import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.security.Principal;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 /**
@@ -21,15 +27,19 @@ import static java.util.Objects.nonNull;
 @Secured
 @Provider
 @Priority(Priorities.AUTHENTICATION)
+@AllArgsConstructor
 public class AuthenticationFilter implements ContainerRequestFilter {
 
     private static final String AUTHENTICATION_SCHEME = "Bearer";
 
+    /**
+     * The TokenDAO.
+     */
+    private final TokenDAO tokenDAO;
+
     @Override
     public void filter(final ContainerRequestContext requestContext) throws IOException {
         final String authorizationHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
-
-        final SecurityContext requestSecurityContext = requestContext.getSecurityContext();
 
         final Response unauthorizedResponse = Response.status(Response.Status.UNAUTHORIZED).type(MediaType.APPLICATION_JSON).entity("You aint authorized, bish...").build();
         if (!this.isTokenBasedAuthentication(authorizationHeader)) {
@@ -49,8 +59,9 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         return nonNull(authorizationHeader) && authorizationHeader.toLowerCase().startsWith(AUTHENTICATION_SCHEME.toLowerCase() + " ");
     }
 
-    private void validateToken(final String token) throws InvalidTokenException {
-        if (!token.equals("foo")) {
+    @UnitOfWork
+    private void validateToken(final String headerToken) throws InvalidTokenException {
+        if (isNull(this.tokenDAO.findByToken(headerToken))) {
             throw new InvalidTokenException();
         }
     }

@@ -3,11 +3,6 @@ package com.inamona.api;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.Arrays;
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
-
 /**
  * Models the four suites in a standard 52-card deck of playing cards.
  *

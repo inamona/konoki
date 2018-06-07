@@ -22,6 +22,7 @@ dependencies {
     compile group: 'io.dropwizard', name: 'dropwizard-core', version:'1.3.2'
     compile group: 'io.dropwizard', name: 'dropwizard-hibernate', version:'1.3.2'
     compile group: 'org.postgresql', name: 'postgresql', version:'9.4-1206-jdbc42'
+    compile group: 'org.mindrot', name: 'jbcrypt', version: '0.4'
     testCompile group: 'junit', name: 'junit', version:'4.12'
     compile(group: 'org.projectlombok', name: 'lombok', version:'1.16.20') {
        /* This dependency was originally in the Maven provided scope, but the project was not of type war.

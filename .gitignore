@@ -13,3 +13,5 @@ Gradle
 /build/
 /out/
 *.class
+
+/keys

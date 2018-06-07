@@ -21,12 +21,6 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @Table(name = "hands")
-@NamedQueries(
-    @NamedQuery(
-        name = "com.inamona.api.Hand.findAll",
-        query = "from Hand h"
-    )
-)
 @EqualsAndHashCode
 public class Hand {
     /**

@@ -7,9 +7,13 @@ config.yml
 
 Gradle
 .gradle
+/gradle/
 
 # Build
 /target/
 /build/
 /out/
 *.class
+
+/keys/
+*.env

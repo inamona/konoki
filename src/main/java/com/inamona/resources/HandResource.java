@@ -1,7 +1,6 @@
 package com.inamona.resources;
 
 import com.codahale.metrics.annotation.Timed;
-import com.inamona.api.Game;
 import com.inamona.db.HandDAO;
 import io.dropwizard.hibernate.UnitOfWork;
 import lombok.AllArgsConstructor;

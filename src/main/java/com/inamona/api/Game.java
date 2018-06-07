@@ -6,16 +6,18 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.collect.Lists;
+import com.inamona.resources.GameResource;
 import com.inamona.resources.HandResource;
 import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,12 +30,6 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "games")
-@NamedQueries(
-    @NamedQuery(
-        name = "com.inamona.api.Game.findAll",
-        query = "from Game g"
-    )
-)
 public class Game {
     /**
      * The ID of this game.
@@ -70,7 +66,7 @@ public class Game {
     @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
     @JsonSerialize
     @JsonDeserialize
-    private final List<Link> links = Lists.newArrayList();
+    private List<Link> links = Lists.newArrayList();
 
     /**
      * Adds a {@link Hand} to this Game.
@@ -101,34 +97,22 @@ public class Game {
     }
 
     /**
-     * Produces an absolute {@link URI} to this Game.
+     * Convenience method to get all the {@link Link}s for a given {@link Game}.
      * @param uriInfo the {@link UriInfo} from the incoming request.
-     * @return the absolute {@link URI} to this Game.
-     */
-    public URI selfUri(final UriInfo uriInfo) {
-        return uriInfo.getAbsolutePath();
-    }
-
-    /**
-     * Sets all the {@link Link}s to be sent in the client {@link Response}.
-     * @param uriInfo the {@link UriInfo} from the incoming request.
+     * @return the {@link Link}s for the {@link Game}.
      */
     public void setLinks(final UriInfo uriInfo) {
-        this.addLink(new Link(uriInfo.getAbsolutePath(), "self"));
-        this.hands.forEach(hand -> this.addLink(this.getHandLink(hand, uriInfo)));
-    }
+        final URI selfHref = uriInfo.getBaseUriBuilder()
+            .path(GameResource.class)
+            .path(String.valueOf(this.getGameId()))
+            .build();
 
-    /**
-     * Convenience method to get a {@link Link} for a given {@link Hand} resource on this Game.
-     * @param hand the {@link Hand} for which a {@link Link} is to be generated.
-     * @param uriInfo the {@link UriInfo} from the incoming request.
-     * @return the {@link Link} for the {@link} Hand.
-     */
-    private Link getHandLink(final Hand hand, final UriInfo uriInfo) {
-        final URI handHref = uriInfo.getAbsolutePathBuilder()
-            .path(HandResource.class)
-            .path(String.valueOf(hand.getHandId()))
-            .build(hand);
-        return new Link(handHref, "hand");
+        final List<Link> links = new ArrayList<>();
+        links.add(new Link(selfHref, "self"));
+        this.getHands().forEach(hand -> {
+            final UriBuilder handHrefBuilder = uriInfo.getAbsolutePathBuilder().path(HandResource.class);
+            links.add(new Link(handHrefBuilder.path(String.valueOf(hand.getHandId())).build(), "hand"));
+        });
+        this.links = links;
     }
 }

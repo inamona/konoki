@@ -5,6 +5,7 @@ import com.inamona.api.Hand;
 import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.SessionFactory;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 /**
@@ -31,6 +32,7 @@ public class GameDAO extends AbstractDAO<Game> {
     }
 
     public List<Game> findAll() {
-        return this.list(this.namedQuery("com.inamona.api.Game.findAll"));
+        final EntityManager entityManager = this.currentSession().getEntityManagerFactory().createEntityManager();
+        return entityManager.createQuery("select g from Game g", Game.class).getResultList();
     }
 }

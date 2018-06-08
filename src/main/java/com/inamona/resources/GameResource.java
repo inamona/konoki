@@ -9,6 +9,9 @@ import com.inamona.db.HandDAO;
 import io.dropwizard.hibernate.UnitOfWork;
 import lombok.AllArgsConstructor;
 
+import javax.annotation.security.DenyAll;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -39,6 +42,7 @@ public class GameResource {
     @GET
     @Timed
     @UnitOfWork
+    @PermitAll
     public Response getAllGames(@Context UriInfo uriInfo) {
         final List<Game> games = this.gameDAO.findAll();
         games.forEach(game -> game.setLinks(uriInfo));
@@ -49,6 +53,7 @@ public class GameResource {
     @Path("/{gameId}")
     @Timed
     @UnitOfWork
+    @RolesAllowed("actor")
     public Response getGameById(@PathParam("gameId") final long gameId, @Context UriInfo uriInfo) {
         final Game game = this.gameDAO.findById(gameId);
         game.setLinks(uriInfo);
@@ -61,6 +66,7 @@ public class GameResource {
     @Path("/{gameId}/hands")
     @Timed
     @UnitOfWork
+    @DenyAll
     public Response getAllHandsForGame(@PathParam("gameId") final long gameId) {
         return Response.ok().entity(this.gameDAO.findById(gameId).getHands()).build();
     }

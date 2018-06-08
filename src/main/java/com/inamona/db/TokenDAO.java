@@ -31,6 +31,6 @@ public class TokenDAO extends AbstractDAO<Token> {
     }
 
     public Token findByToken(final String token) {
-        return this.currentSession().byNaturalId(Token.class).using("token", token).load();
+        return this.currentSession().byId(Token.class).load(token);
     }
 }

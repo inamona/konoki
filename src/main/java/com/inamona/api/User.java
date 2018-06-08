@@ -12,6 +12,7 @@ import javax.persistence.*;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Models a user of the application.
@@ -53,6 +54,13 @@ public class User implements Principal {
     @JsonIgnore
     @Column(name = "hashed_password", nullable = false)
     private String hashedPassword;
+
+    /**
+     * The User's roles.
+     */
+    @OneToMany(fetch = FetchType.EAGER)
+    @JsonIgnore
+    private List<Role> roles;
 
     /**
      * The {@link Date} at which the User was created.

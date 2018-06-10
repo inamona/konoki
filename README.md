@@ -1,5 +1,7 @@
 # konoki
 
+[![Build Status](https://travis-ci.org/inamona/konoki.svg?branch=master)](https://travis-ci.org/inamona/konoki)
+
 How to start the konoki application
 ---
 

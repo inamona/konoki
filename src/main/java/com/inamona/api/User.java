@@ -1,13 +1,18 @@
 package com.inamona.api;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.NaturalId;
+import org.mindrot.jbcrypt.BCrypt;
 
 import javax.persistence.*;
 import java.security.Principal;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Models a user of the application.
@@ -33,22 +38,44 @@ public class User implements Principal {
      * The email address of this User.
      */
     @NaturalId
-    @Column(name = "email", updatable = true, nullable = false, unique = true)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     /**
      * The User's salt.
      */
     @JsonIgnore
-    @Column(name = "salt", updatable = true, nullable = false)
+    @Column(name = "salt", nullable = false)
     private String salt;
 
     /**
      * The User's hashed password.
      */
     @JsonIgnore
-    @Column(name = "hashed_password", updatable = true, nullable = false)
+    @Column(name = "hashed_password", nullable = false)
     private String hashedPassword;
+
+    /**
+     * The User's roles.
+     */
+    @OneToMany(fetch = FetchType.EAGER)
+    @JsonIgnore
+    private List<Role> roles;
+
+    /**
+     * The {@link Date} at which the User was created.
+     */
+    @Column(name = "created_at", updatable = false)
+    @CreationTimestamp
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createdAt;
+
+    /**
+     * The {@link Date} at which the User was last logged in.
+     */
+    @Column(name = "last_login", updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime lastLogin;
 
     /**
      * New instance.
@@ -65,5 +92,9 @@ public class User implements Principal {
     @Override
     public String getName() {
         return this.email;
+    }
+
+    public boolean passwordMatches(final String password) {
+        return this.hashedPassword.equals(BCrypt.hashpw(password, this.salt));
     }
 }

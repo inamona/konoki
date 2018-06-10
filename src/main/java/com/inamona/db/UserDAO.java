@@ -28,4 +28,8 @@ public class UserDAO extends AbstractDAO<User> {
         final User user = new User(email, salt, hashedPassword);
         return this.persist(user);
     }
+
+    public User findByEmail(final String email) {
+        return this.currentSession().byNaturalId(User.class).using("email", email).load();
+    }
 }

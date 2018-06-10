@@ -7,7 +7,7 @@ createUser() {
 
 # generates a token
 createToken() {
-  local token=$(curl -k -XPOST https://localhost:8443/authentication/ -d "email=chris1" -d "password=blah")
+  local token=$(curl -k -XPOST https://localhost:8443/token/ -d "email=chris1" -d "password=blah")
   echo "${token}"
 }
 

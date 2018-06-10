@@ -1,31 +1,38 @@
 package com.inamona.resources;
 
 import com.inamona.api.User;
-import com.inamona.db.TokenDAO;
 import com.inamona.db.UserDAO;
 import io.dropwizard.hibernate.UnitOfWork;
+import io.jsonwebtoken.CompressionCodecs;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.AllArgsConstructor;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.TemporalUnit;
+import java.util.Date;
 
 /**
  * @author christopher
  * @since 6/6/18
  */
-@Path("authentication")
+@Path("token")
 @AllArgsConstructor
-public class AuthenticationResource {
+public class TokenResource {
     /**
      * The UserDAO.
      */
-    final UserDAO userDAO;
+    private final UserDAO userDAO;
 
     /**
-     * The TokenDAO.
+     * The HS256 key.
      */
-    final TokenDAO tokenDAO;
+    private final String hs256key;
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -37,18 +44,19 @@ public class AuthenticationResource {
     ) {
         final User user = this.userDAO.findByEmail(email);
         if (user.passwordMatches(password)) {
-            final String token = this.issueToken(user);
-            return Response.ok(token).build();
+            final String jwt = this.issueToken(user);
+            return Response.ok(jwt).build();
         }
         return Response.status(Response.Status.FORBIDDEN).build();
     }
 
-    /**
-     * Issues a token for the given User.
-     * @param user the User.
-     * @return the API token.
-     */
     private String issueToken(final User user) {
-        return this.tokenDAO.create(user).getToken();
+        final Date expirationDate = Date.from(Instant.now().plusSeconds(3600L));
+        return Jwts.builder()
+            .setSubject(user.getEmail())
+            .setExpiration(expirationDate)
+            .compressWith(CompressionCodecs.DEFLATE)
+            .signWith(SignatureAlgorithm.HS256, this.hs256key)
+            .compact();
     }
 }

@@ -24,7 +24,7 @@ import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 public class KonokiApplication extends Application<KonokiConfiguration> {
 
     private final HibernateBundle<KonokiConfiguration> hibernateBundle = new HibernateBundle<KonokiConfiguration>(
-        Game.class, Hand.class, User.class, Token.class, Role.class
+        Game.class, Hand.class, User.class, Role.class
     ) {
         @Override
         public PooledDataSourceFactory getDataSourceFactory(final KonokiConfiguration konokiConfiguration) {
@@ -76,8 +76,6 @@ public class KonokiApplication extends Application<KonokiConfiguration> {
                     .buildAuthFilter()
             )
         );
-
-        System.out.print("Got HS256 key: " + hs256key);
 
         environment.jersey().register(RolesAllowedDynamicFeature.class);
         environment.jersey().register(new HandResource(handDAO));

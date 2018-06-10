@@ -3,7 +3,7 @@
 *.iml
 
 # Configs
-config.yml
+*config.yml
 
 Gradle
 .gradle
